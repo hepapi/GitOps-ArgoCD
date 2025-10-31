@@ -1,0 +1,61 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: mysql-dev
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: np-dev
+            name: dev
+            version: 14.0.3
+            ns: 'namespace=~"database"'
+  template:
+    metadata:
+      name: '{{cluster}}-mysql'
+    spec:
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: false
+        syncOptions:
+          - Validate=true
+          - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
+      destination:
+        namespace: database
+        name: '{{cluster}}'
+      project: default
+      source:
+        repoURL: https://charts.bitnami.com/bitnami
+        targetRevision: '{{version}}'
+        chart: mysql
+        helm:
+          values: |
+            global:
+              security:
+                allowInsecureImages: true
+
+            image:
+              registry: docker.io
+              repository: bitnamilegacy/mysql
+              tag: "9.4.0-debian-12-r1"
+
+            auth:
+              rootPassword: "petclinic"
+              username: "petclinic"
+              password: "petclinic"
+              database: "petclinic"
+              createDatabase: true
+
+            primary:
+              startupProbe:
+                enabled: true
+                failureThreshold: 20
+                periodSeconds: 10
+                initialDelaySeconds: 30
+
+            persistence:
+              size: 3Gi

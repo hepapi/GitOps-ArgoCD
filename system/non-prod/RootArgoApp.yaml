@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-system
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/hepapi/GitOps-ArgoCD.git'
+    targetRevision: main
+    # path to the directory containing the application manifests
+    path: system/non-prod
+    directory:
+      recurse: true # finds all yaml files in subdirectories
+      exclude: '{*RootArgoApp.yaml,*RootArgoApp.yml}' # do not manage root apps
+      # include: '*.yaml'
+  destination:
+    name: "np-dev"
+    namespace: argocd
+  syncPolicy:
+    automated: 
+      prune: true 
+      selfHeal: true

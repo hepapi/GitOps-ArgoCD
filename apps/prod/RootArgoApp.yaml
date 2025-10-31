@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prod-root-apps
+  namespace: argocd
+spec:
+  project: prod-hepapi
+  source:
+    repoURL: 'https://github.com/hepapi/GitOps-ArgoCD.git'
+    targetRevision: main
+    # path to the directory containing the application manifests
+    path: apps/prod
+    directory:
+      recurse: true # finds all yaml files in subdirectories
+      exclude: '{*RootArgoApp.yaml,*RootArgoApp.yml}' # do not manage root apps
+      # include: '*.yaml'
+  destination:
+    name: "prod-ds"
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+  ignoreDifferences:
+      - group: argoproj.io
+        kind: Application
+        jsonPointers:
+          - /spec/syncPolicy
