@@ -7,7 +7,6 @@ spec:
   project: np-hepapi
   source:
     repoURL: 'https://nexus.hepapi.com/repository/nexushelmrepository/'
-
     chart: 	spring-petclinic-dev
     targetRevision: '1.*'
   destination:
