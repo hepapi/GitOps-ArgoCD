@@ -6,7 +6,7 @@ metadata:
 spec:
   project: np-hepapi
   source:
-    repoURL: 'my-nexus-repository-manager.nexus.svc.cluster.local:8081/repository/nexushelmrepository/'
+    repoURL: 'http://my-nexus-repository-manager.nexus.svc.cluster.local:8081/repository/nexushelmrepository/'
     chart: 	spring-petclinic-dev
     targetRevision: '1.*'
   destination:
