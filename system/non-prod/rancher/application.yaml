@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: rancher
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: np-dev
+            name: dev
+            version: v2.12.3
+  template:
+    metadata:
+      name: '{{cluster}}-rancher'
+    spec:
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: false
+        syncOptions:
+          - Validate=true
+          - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
+      destination:
+        namespace: cattle-system
+        name: '{{cluster}}'
+      project: default
+      source:
+        repoURL: https://releases.rancher.com/server-charts/stable
+        targetRevision: '{{version}}'
+        chart: rancher
+        helm:
+          values: |
+            hostname: rancher.hepapi.com
+            bootstrapPassword: "hepapi123"
+
+            ingress:
+              enabled: true
+              ingressClassName: "nginx"
+              tls:
+                source: letsEncrypt
+              annotations:
+                cert-manager.io/cluster-issuer: "letsencrypt"
+                nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+                nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+
+            letsEncrypt:
+              ingress:
+                class: nginx
+              email: necip@hepapi.com
+              environment: production
