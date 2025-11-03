@@ -35,6 +35,7 @@ spec:
           values: |
             hostname: rancher.hepapi.com
             bootstrapPassword: "hepapi123"
+            replicas: 1
 
             ingress:
               enabled: true
