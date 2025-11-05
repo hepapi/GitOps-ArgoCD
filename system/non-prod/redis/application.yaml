@@ -15,6 +15,11 @@ spec:
     metadata:
       name: '{{cluster}}-redis-cart'
     spec:
+      project: default
+      destination:
+        namespace: database
+        name: '{{cluster}}'
+
       syncPolicy:
         automated:
           selfHeal: true
@@ -24,10 +29,7 @@ spec:
           - CreateNamespace=true
           - PrunePropagationPolicy=foreground
           - PruneLast=true
-      destination:
-        namespace: database
-        name: '{{cluster}}'
-      project: default
+
       source:
         repoURL: https://charts.bitnami.com/bitnami
         targetRevision: '{{version}}'
@@ -46,8 +48,9 @@ spec:
 
             architecture: standalone
 
+            # No password
             auth:
-              enabled: false  
+              enabled: false
 
             master:
               service:
@@ -56,18 +59,32 @@ spec:
                 servicePort: 6379
                 name: redis-cart
 
-              redis:
-                extraFlags:
-                  - "--appendonly no"
-                  - "--save ''"
-                  - "--dir /tmp"
+              # ✅ Disable AOF / RDB / persistence
+              redisExtraFlags:
+                - "--appendonly no"
+                - "--save ''"
+                - "--dir /tmp"
+                - "--appenddirname appendonlydir"
 
+              # ✅ Writable dir for runtime files
               extraVolumes:
                 - name: tmp
                   emptyDir: {}
               extraVolumeMounts:
                 - name: tmp
                   mountPath: /tmp
+
+              # ✅ Allow running as root to avoid permission errors
+              podSecurityContext:
+                enabled: true
+                runAsUser: 0
+                runAsGroup: 0
+                fsGroup: 0
+
+              containerSecurityContext:
+                enabled: true
+                allowPrivilegeEscalation: true
+                readOnlyRootFilesystem: false
 
               resources:
                 requests:
@@ -76,23 +93,6 @@ spec:
                 limits:
                   cpu: "125m"
                   memory: "256Mi"
-
-              containerSecurityContext:
-                enabled: true
-                runAsUser: 0
-                runAsGroup: 0                
-                allowPrivilegeEscalation: true
-                readOnlyRootFilesystem: false
-                capabilities:
-                  drop:
-                    - ALL
-
-              podSecurityContext:
-                enabled: false
-                fsGroup: 1000
-                runAsUser: 1000
-                runAsGroup: 1000
-                runAsNonRoot: true
 
             persistence:
               enabled: false
