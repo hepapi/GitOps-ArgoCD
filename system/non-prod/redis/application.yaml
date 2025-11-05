@@ -50,33 +50,36 @@ spec:
               enabled: false  
 
             master:
-              service:
-                ports:
-                  redis: 6379
-                servicePort: 6379
-                name: redis-cart
-              resources:
-                requests:
-                  cpu: "70m"
-                  memory: "200Mi"
-                limits:
-                  cpu: "125m"
-                  memory: "256Mi"
+              redisExtraFlags:
+                - "--appendonly no"
+                - "--save ''"
+                - "--dir /tmp"   
+            
+              extraVolumes:
+                - name: tmp
+                  emptyDir: {}
+              extraVolumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+            
               containerSecurityContext:
                 enabled: true
                 allowPrivilegeEscalation: false
-                readOnlyRootFilesystem: false
+                readOnlyRootFilesystem: false  
                 capabilities:
                   drop:
                     - ALL
+            
               podSecurityContext:
                 enabled: true
                 fsGroup: 1000
                 runAsUser: 1000
                 runAsGroup: 1000
                 runAsNonRoot: true
-              redisExtraFlags:
-                - "--appendonly no"
+            
+            persistence:
+              enabled: false
+
 
             persistence:
               enabled: false 
