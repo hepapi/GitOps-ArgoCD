@@ -61,9 +61,13 @@ spec:
               extraVolumes:
                 - name: data
                   emptyDir: {}
+                - name: appendonlydir
+                  emptyDir: {}
               extraVolumeMounts:
                 - name: data
                   mountPath: /data
+                - name: appendonlydir
+                  mountPath: /data/appendonlydir
             
               resources:
                 requests:
