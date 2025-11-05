@@ -48,44 +48,28 @@ spec:
 
             architecture: standalone
 
-            # No password
             auth:
               enabled: false
-
+            
             master:
               service:
                 ports:
                   redis: 6379
                 servicePort: 6379
                 name: redis-cart
-
-              # ✅ Disable AOF / RDB / persistence
+            
               redisExtraFlags:
                 - "--appendonly no"
                 - "--save ''"
                 - "--dir /tmp"
-                - "--appenddirname appendonlydir"
-
-              # ✅ Writable dir for runtime files
+            
               extraVolumes:
                 - name: tmp
                   emptyDir: {}
               extraVolumeMounts:
                 - name: tmp
                   mountPath: /tmp
-
-              # ✅ Allow running as root to avoid permission errors
-              podSecurityContext:
-                enabled: true
-                runAsUser: 0
-                runAsGroup: 0
-                fsGroup: 0
-
-              containerSecurityContext:
-                enabled: true
-                allowPrivilegeEscalation: true
-                readOnlyRootFilesystem: false
-
+            
               resources:
                 requests:
                   cpu: "70m"
@@ -93,6 +77,21 @@ spec:
                 limits:
                   cpu: "125m"
                   memory: "256Mi"
-
+            
+              containerSecurityContext:
+                enabled: true
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: false
+                capabilities:
+                  drop:
+                    - ALL
+            
+              podSecurityContext:
+                enabled: true
+                fsGroup: 1000
+                runAsUser: 1000
+                runAsGroup: 1000
+                runAsNonRoot: true
+            
             persistence:
               enabled: false
