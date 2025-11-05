@@ -19,7 +19,6 @@ spec:
       destination:
         namespace: database
         name: '{{cluster}}'
-
       syncPolicy:
         automated:
           selfHeal: true
@@ -29,7 +28,6 @@ spec:
           - CreateNamespace=true
           - PrunePropagationPolicy=foreground
           - PruneLast=true
-
       source:
         repoURL: https://charts.bitnami.com/bitnami
         targetRevision: '{{version}}'
@@ -39,15 +37,12 @@ spec:
             global:
               security:
                 allowInsecureImages: true
-
             image:
               registry: docker.io
               repository: bitnamilegacy/redis
               tag: "8.2.1-debian-12-r0"
               pullPolicy: IfNotPresent
-
             architecture: standalone
-
             auth:
               enabled: false
             
@@ -58,11 +53,10 @@ spec:
                 servicePort: 6379
                 name: redis-cart
             
-              redisExtraFlags:
-                - "--appendonly no"
-                - "--save ''"
-                - "--dir /tmp"
-                - "--appendonlydir /tmp"
+              configuration: |
+                appendonly no
+                save ""
+                dir /tmp
             
               extraVolumes:
                 - name: tmp
