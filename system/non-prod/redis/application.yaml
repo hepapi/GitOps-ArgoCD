@@ -1,0 +1,80 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: redis-cart-dev
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: np-dev
+            name: dev
+            version: 23.2.5
+            ns: 'namespace=~"database"'
+  template:
+    metadata:
+      name: '{{cluster}}-redis-cart'
+    spec:
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: false
+        syncOptions:
+          - Validate=true
+          - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
+      destination:
+        namespace: database
+        name: '{{cluster}}'
+      project: default
+      source:
+        repoURL: https://charts.bitnami.com/bitnami
+        targetRevision: '{{version}}'
+        chart: redis
+        helm:
+          values: |
+            global:
+              security:
+                allowInsecureImages: true
+
+            image:
+              registry: docker.io
+              repository: bitnamilegacy/redis
+              tag: "8.2.1-debian-12-r0"
+              pullPolicy: IfNotPresent
+
+            architecture: standalone
+
+            auth:
+              enabled: false  
+
+            master:
+              service:
+                ports:
+                  redis: 6379
+                servicePort: 6379
+                name: redis-cart
+              resources:
+                requests:
+                  cpu: "70m"
+                  memory: "200Mi"
+                limits:
+                  cpu: "125m"
+                  memory: "256Mi"
+              containerSecurityContext:
+                enabled: true
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+              podSecurityContext:
+                enabled: true
+                fsGroup: 1000
+                runAsUser: 1000
+                runAsGroup: 1000
+                runAsNonRoot: true
+
+            persistence:
+              enabled: false 
