@@ -15,6 +15,10 @@ spec:
     metadata:
       name: '{{cluster}}-redis-cart'
     spec:
+      project: default
+      destination:
+        namespace: database
+        name: '{{cluster}}'
       syncPolicy:
         automated:
           selfHeal: true
@@ -24,10 +28,6 @@ spec:
           - CreateNamespace=true
           - PrunePropagationPolicy=foreground
           - PruneLast=true
-      destination:
-        namespace: database
-        name: '{{cluster}}'
-      project: default
       source:
         repoURL: https://charts.bitnami.com/bitnami
         targetRevision: '{{version}}'
@@ -37,24 +37,38 @@ spec:
             global:
               security:
                 allowInsecureImages: true
-
             image:
               registry: docker.io
               repository: bitnamilegacy/redis
               tag: "8.2.1-debian-12-r0"
               pullPolicy: IfNotPresent
-
             architecture: standalone
-
             auth:
-              enabled: false  
-
+              enabled: false
+            
             master:
               service:
                 ports:
                   redis: 6379
                 servicePort: 6379
                 name: redis-cart
+            
+              configuration: |
+                appendonly no
+                save ""
+                dir /data
+            
+              extraVolumes:
+                - name: data
+                  emptyDir: {}
+                - name: appendonlydir
+                  emptyDir: {}
+              extraVolumeMounts:
+                - name: data
+                  mountPath: /data
+                - name: appendonlydir
+                  mountPath: /data/appendonlydir
+            
               resources:
                 requests:
                   cpu: "70m"
@@ -62,21 +76,21 @@ spec:
                 limits:
                   cpu: "125m"
                   memory: "256Mi"
+            
               containerSecurityContext:
                 enabled: true
                 allowPrivilegeEscalation: false
-                readOnlyRootFilesystem: true
+                readOnlyRootFilesystem: false
                 capabilities:
                   drop:
                     - ALL
+            
               podSecurityContext:
                 enabled: true
-                fsGroup: 1000
-                runAsUser: 1000
-                runAsGroup: 1000
+                fsGroup: 1001
+                runAsUser: 1001
+                runAsGroup: 1001
                 runAsNonRoot: true
-              redisExtraFlags:
-                - "--appendonly no"
-
+            
             persistence:
-              enabled: false 
+              enabled: false
