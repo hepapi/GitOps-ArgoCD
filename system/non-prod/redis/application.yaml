@@ -56,14 +56,14 @@ spec:
               configuration: |
                 appendonly no
                 save ""
-                dir /tmp
+                dir /data
             
               extraVolumes:
-                - name: tmp
+                - name: data
                   emptyDir: {}
               extraVolumeMounts:
-                - name: tmp
-                  mountPath: /tmp
+                - name: data
+                  mountPath: /data
             
               resources:
                 requests:
@@ -83,9 +83,9 @@ spec:
             
               podSecurityContext:
                 enabled: true
-                fsGroup: 1000
-                runAsUser: 1000
-                runAsGroup: 1000
+                fsGroup: 1001
+                runAsUser: 1001
+                runAsGroup: 1001
                 runAsNonRoot: true
             
             persistence:
