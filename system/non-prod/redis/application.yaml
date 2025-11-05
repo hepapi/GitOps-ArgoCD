@@ -62,6 +62,7 @@ spec:
                 - "--appendonly no"
                 - "--save ''"
                 - "--dir /tmp"
+                - "--appendonlydir /tmp"
             
               extraVolumes:
                 - name: tmp
