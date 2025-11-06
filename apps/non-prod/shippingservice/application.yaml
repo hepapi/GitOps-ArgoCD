@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sh
+  name: shippingservice
   namespace: argocd
 spec:
   project: np-hepapi
