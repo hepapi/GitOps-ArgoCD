@@ -10,14 +10,13 @@ spec:
           - cluster: np-dev
             name: dev
             version: 23.2.5
-            ns: 'namespace=~"database"'
   template:
     metadata:
       name: '{{cluster}}-redis-cart'
     spec:
       project: default
       destination:
-        namespace: database
+        namespace: dev
         name: '{{cluster}}'
       syncPolicy:
         automated:
