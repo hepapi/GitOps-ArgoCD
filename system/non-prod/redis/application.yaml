@@ -1,95 +1,95 @@
-apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-  name: redis-cart-dev
-  namespace: argocd
-spec:
-  generators:
-    - list:
-        elements:
-          - cluster: np-dev
-            name: dev
-            version: 23.2.5
-  template:
-    metadata:
-      name: '{{cluster}}-redis-cart'
-    spec:
-      project: default
-      destination:
-        namespace: dev
-        name: '{{cluster}}'
-      syncPolicy:
-        automated:
-          selfHeal: true
-          prune: false
-        syncOptions:
-          - Validate=true
-          - CreateNamespace=true
-          - PrunePropagationPolicy=foreground
-          - PruneLast=true
-      source:
-        repoURL: https://charts.bitnami.com/bitnami
-        targetRevision: '{{version}}'
-        chart: redis
-        helm:
-          values: |
-            global:
-              security:
-                allowInsecureImages: true
-            image:
-              registry: docker.io
-              repository: bitnamilegacy/redis
-              tag: "8.2.1-debian-12-r0"
-              pullPolicy: IfNotPresent
-            architecture: standalone
-            auth:
-              enabled: false
+# apiVersion: argoproj.io/v1alpha1
+# kind: ApplicationSet
+# metadata:
+#   name: redis-cart-dev
+#   namespace: argocd
+# spec:
+#   generators:
+#     - list:
+#         elements:
+#           - cluster: np-dev
+#             name: dev
+#             version: 23.2.5
+#   template:
+#     metadata:
+#       name: '{{cluster}}-redis-cart'
+#     spec:
+#       project: default
+#       destination:
+#         namespace: dev
+#         name: '{{cluster}}'
+#       syncPolicy:
+#         automated:
+#           selfHeal: true
+#           prune: false
+#         syncOptions:
+#           - Validate=true
+#           - CreateNamespace=true
+#           - PrunePropagationPolicy=foreground
+#           - PruneLast=true
+#       source:
+#         repoURL: https://charts.bitnami.com/bitnami
+#         targetRevision: '{{version}}'
+#         chart: redis
+#         helm:
+#           values: |
+#             global:
+#               security:
+#                 allowInsecureImages: true
+#             image:
+#               registry: docker.io
+#               repository: bitnamilegacy/redis
+#               tag: "8.2.1-debian-12-r0"
+#               pullPolicy: IfNotPresent
+#             architecture: standalone
+#             auth:
+#               enabled: false
             
-            master:
-              service:
-                ports:
-                  redis: 6379
-                servicePort: 6379
-                name: redis-cart
+#             master:
+#               service:
+#                 ports:
+#                   redis: 6379
+#                 servicePort: 6379
+#                 name: redis-cart
             
-              configuration: |
-                appendonly no
-                save ""
-                dir /data
+#               configuration: |
+#                 appendonly no
+#                 save ""
+#                 dir /data
             
-              extraVolumes:
-                - name: data
-                  emptyDir: {}
-                - name: appendonlydir
-                  emptyDir: {}
-              extraVolumeMounts:
-                - name: data
-                  mountPath: /data
-                - name: appendonlydir
-                  mountPath: /bitnami/redis/appendonlydir
+#               extraVolumes:
+#                 - name: data
+#                   emptyDir: {}
+#                 - name: appendonlydir
+#                   emptyDir: {}
+#               extraVolumeMounts:
+#                 - name: data
+#                   mountPath: /data
+#                 - name: appendonlydir
+#                   mountPath: /bitnami/redis/appendonlydir
             
-              resources:
-                requests:
-                  cpu: "70m"
-                  memory: "200Mi"
-                limits:
-                  cpu: "125m"
-                  memory: "256Mi"
+#               resources:
+#                 requests:
+#                   cpu: "70m"
+#                   memory: "200Mi"
+#                 limits:
+#                   cpu: "125m"
+#                   memory: "256Mi"
             
-              containerSecurityContext:
-                enabled: true
-                allowPrivilegeEscalation: false
-                readOnlyRootFilesystem: false
-                capabilities:
-                  drop:
-                    - ALL
+#               containerSecurityContext:
+#                 enabled: true
+#                 allowPrivilegeEscalation: false
+#                 readOnlyRootFilesystem: false
+#                 capabilities:
+#                   drop:
+#                     - ALL
             
-              podSecurityContext:
-                enabled: true
-                fsGroup: 1001
-                runAsUser: 1001
-                runAsGroup: 1001
-                runAsNonRoot: true
+#               podSecurityContext:
+#                 enabled: true
+#                 fsGroup: 1001
+#                 runAsUser: 1001
+#                 runAsGroup: 1001
+#                 runAsNonRoot: true
             
-            persistence:
-              enabled: false
+#             persistence:
+#               enabled: false
