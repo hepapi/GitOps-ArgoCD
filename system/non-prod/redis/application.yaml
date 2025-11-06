@@ -33,7 +33,6 @@ spec:
         chart: redis
         helm:
           values: |
-            # Service name override
             fullnameOverride: "redis-cart"
             
             global:
@@ -60,15 +59,6 @@ spec:
               configuration: |
                 appendonly no
                 save ""
-                dir /data
-
-              extraVolumes:
-                - name: redis-data
-                  emptyDir: {}
-
-              extraVolumeMounts:
-                - name: redis-data
-                  mountPath: /data
 
               resources:
                 requests:
@@ -82,6 +72,7 @@ spec:
                 enabled: true
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: false
+                runAsUser: 1001
                 capabilities:
                   drop:
                     - ALL
@@ -89,8 +80,6 @@ spec:
               podSecurityContext:
                 enabled: true
                 fsGroup: 1001
-                runAsUser: 1001
-                runAsGroup: 1001
                 runAsNonRoot: true
 
             persistence:
