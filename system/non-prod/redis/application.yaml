@@ -59,6 +59,7 @@ spec:
               configuration: |
                 appendonly no
                 save ""
+                dir /bitnami/redis/data
 
               resources:
                 requests:
