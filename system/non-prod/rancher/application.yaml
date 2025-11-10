@@ -1,50 +1,56 @@
-# apiVersion: argoproj.io/v1alpha1
-# kind: ApplicationSet
-# metadata:
-#   name: rancher
-#   namespace: argocd
-# spec:
-#   generators:
-#     - list:
-#         elements:
-#           - cluster: np-dev
-#             name: dev
-#             version: v2.12.3
-#   template:
-#     metadata:
-#       name: '{{cluster}}-rancher'
-#     spec:
-#       project: default
-#       destination:
-#         namespace: cattle-system
-#         name: '{{cluster}}'
-#       syncPolicy:
-#         automated:
-#           selfHeal: true
-#           prune: false
-#         syncOptions:
-#           - Validate=true
-#           - CreateNamespace=true
-#           - PrunePropagationPolicy=foreground
-#           - PruneLast=true
-#       source:
-#         repoURL: https://releases.rancher.com/server-charts/stable
-#         targetRevision: '{{version}}'
-#         chart: rancher
-#         helm:
-#           values: |
-#             hostname: rancher.hepapi.com
-#             bootstrapPassword: "hepapi123"
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: rancher
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: np-dev
+            name: dev
+            version: v2.12.3
+  template:
+    metadata:
+      name: '{{cluster}}-rancher'
+    spec:
+      project: default
+      destination:
+        namespace: cattle-system
+        name: '{{cluster}}'
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: false
+        syncOptions:
+          - Validate=true
+          - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
+      source:
+        repoURL: https://releases.rancher.com/server-charts/stable
+        targetRevision: '{{version}}'
+        chart: rancher
+        helm:
+          values: |
+            hostname: rancher.hepapi.com
+            bootstrapPassword: "hepapi123"
 
-#             ingress:
-#               enabled: true
-#               ingressClassName: "nginx"
-#               annotations:
-#                 nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-#               tls:
-#                 source: secret
-#                 secretName: hepapi-com-wildcard-secret   
+            ingress:
+              enabled: true
+              ingressClassName: "nginx"
+              annotations:
+                cert-manager.io/cluster-issuer: "letsencrypt"
+                nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+              tls:
+                source: secret
+                secretName: tls-rancher-ingress  
 
-#             letsEncrypt:
-#               enabled: false
-#             privateCA: false
+            letsEncrypt:
+              enabled: false
+            privateCA: false
+
+            resources:
+              limits:
+                cpu: 800m
+                memory: 1Gi
