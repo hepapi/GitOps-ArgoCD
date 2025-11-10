@@ -14,6 +14,10 @@ spec:
     metadata:
       name: '{{cluster}}-rancher'
     spec:
+      project: default
+      destination:
+        namespace: cattle-system
+        name: '{{cluster}}'
       syncPolicy:
         automated:
           selfHeal: true
@@ -23,10 +27,6 @@ spec:
           - CreateNamespace=true
           - PrunePropagationPolicy=foreground
           - PruneLast=true
-      destination:
-        namespace: cattle-system
-        name: '{{cluster}}'
-      project: default
       source:
         repoURL: https://releases.rancher.com/server-charts/stable
         targetRevision: '{{version}}'
@@ -39,15 +39,12 @@ spec:
             ingress:
               enabled: true
               ingressClassName: "nginx"
-              tls:
-                source: letsEncrypt
               annotations:
-                cert-manager.io/cluster-issuer: "letsencrypt"
-               # nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
                 nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+              tls:
+                source: secret
+                secretName: hepapi-com-wildcard-secret   
 
             letsEncrypt:
               enabled: false
-
             privateCA: false
-
