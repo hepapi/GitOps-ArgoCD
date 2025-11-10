@@ -48,3 +48,6 @@ spec:
 
             letsEncrypt:
               enabled: false
+
+            privateCA: false
+
