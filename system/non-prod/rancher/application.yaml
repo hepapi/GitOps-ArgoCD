@@ -47,7 +47,4 @@ spec:
                 nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 
             letsEncrypt:
-              ingress:
-                class: nginx
-              email: necip@hepapi.com
-              environment: production
+              enabled: false
