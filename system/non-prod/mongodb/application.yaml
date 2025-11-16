@@ -40,15 +40,15 @@ spec:
 
             architecture: standalone
 
-                affinity:
-                  nodeAffinity:
-                    requiredDuringSchedulingIgnoredDuringExecution:
-                      nodeSelectorTerms:
-                        - matchExpressions:
-                            - key: kubernetes.io/hostname
-                              operator: In
-                              values:
-                                - p-ds-worker-3
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: kubernetes.io/hostname
+                          operator: In
+                          values:
+                            - p-ds-worker-3
 
             image:
               registry: registry-1.docker.io
