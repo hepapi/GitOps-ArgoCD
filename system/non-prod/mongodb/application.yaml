@@ -51,6 +51,16 @@ spec:
               password: "superpassword"
               database: "solarsystem"
  
+            containerSecurityContext:
+              enabled: true
+              runAsUser: 1001
+              runAsGroup: 1001
+              readOnlyRootFilesystem: false
 
+            podSecurityContext:
+              enabled: true
+              fsGroup: 1001
+              fsGroupChangePolicy: Always
+              
             persistence:
               size: 3Gi
