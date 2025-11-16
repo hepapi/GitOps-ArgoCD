@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: mongodb-dev
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: np-dev
+            name: dev
+            version: 18.1.9
+            ns: 'namespace=~"database"'
+  template:
+    metadata:
+      name: '{{cluster}}-mongodb'
+    spec:
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: false
+        syncOptions:
+          - Validate=true
+          - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
+      destination:
+        namespace: database
+        name: '{{cluster}}'
+      project: default
+      source:
+        repoURL: https://charts.bitnami.com/bitnami
+        targetRevision: '{{version}}'
+        chart: mongodb
+        helm:
+          values: |
+            global:
+              security:
+                allowInsecureImages: true
+
+            architecture: standalone
+
+            image:
+              registry: registry-1.docker.io
+              repository: bitnamilegacy/mongodb
+              tag: "8.0.13-debian-12-r0"
+
+            auth:
+              rootPassword: "superpassword"
+              username: "superuser"
+              password: "superpassword"
+              database: "solarsystem"
+ 
+
+            persistence:
+              size: 3Gi
