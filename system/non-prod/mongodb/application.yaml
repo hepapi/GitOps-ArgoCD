@@ -40,6 +40,16 @@ spec:
 
             architecture: standalone
 
+                affinity:
+                  nodeAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                      nodeSelectorTerms:
+                        - matchExpressions:
+                            - key: kubernetes.io/hostname
+                              operator: In
+                              values:
+                                - p-ds-worker-3
+
             image:
               registry: registry-1.docker.io
               repository: bitnamilegacy/mongodb
@@ -61,6 +71,6 @@ spec:
               enabled: true
               fsGroup: 1001
               fsGroupChangePolicy: Always
-              
+
             persistence:
               size: 3Gi
