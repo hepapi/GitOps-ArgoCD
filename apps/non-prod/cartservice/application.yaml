@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://nexus.hepapi.com/repository/nexushelmrepository/'
     chart: 	cartservice-dev
-    targetRevision: '1.*'
+    targetRevision: '1.0.15'
   destination:
     name: "np-dev"
     namespace: dev
