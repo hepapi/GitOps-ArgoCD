@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: 'https://nexus.hepapi.com/repository/nexushelmrepository/'
     chart: 	spring-petclinic-dev
-    targetRevision: '1.*'
+    targetRevision: '1.0.51'
   destination:
     name: "np-dev"
     namespace: dev
