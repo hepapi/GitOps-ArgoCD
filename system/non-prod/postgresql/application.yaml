@@ -1,0 +1,66 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: postgresql-dev
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - cluster: np-dev
+            name: dev
+            version: 18.1.15
+            ns: 'namespace=~"database"'
+  template:
+    metadata:
+      name: '{{cluster}}-postgresql'
+    spec:
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: false
+        syncOptions:
+          - Validate=true
+          - CreateNamespace=true
+          - PrunePropagationPolicy=foreground
+          - PruneLast=true
+      destination:
+        namespace: database
+        name: '{{cluster}}'
+      project: default
+      source:
+        repoURL: https://charts.bitnami.com/bitnami
+        targetRevision: '{{version}}'
+        chart: postgresql
+        helm:
+          values: |
+            global:
+              security:
+                allowInsecureImages: true
+
+            image:
+              registry: registry-1.docker.io
+              repository: bitnamilegacy/postgresql
+              tag: "17.6.0-debian-12-r4"
+
+            fullnameOverride: "postgres"
+
+            auth:
+              postgresPassword: "postgres"
+
+            primary:
+              initdb:
+                scripts:
+                  00-create-databases.sql: |
+                    CREATE DATABASE catalogdb;
+                    CREATE DATABASE identitydb;
+                    CREATE DATABASE orderingdb;
+                    CREATE DATABASE webhooksdb;
+              startupProbe:
+                enabled: true
+                failureThreshold: 20
+                periodSeconds: 10
+                initialDelaySeconds: 30
+
+            persistence:
+              size: 3Gi
