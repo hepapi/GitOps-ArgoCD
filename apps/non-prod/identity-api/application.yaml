@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: identity-api
+  namespace: argocd
+spec:
+  project: np-hepapi
+  source:
+    repoURL: 'https://nexus.hepapi.com/repository/nexushelmrepository/'
+    chart: identity-api-dev
+    targetRevision: '1.*'
+  destination:
+    name: "np-dev"
+    namespace: dev
+  syncPolicy:
+    automated: 
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
