@@ -56,10 +56,26 @@ spec:
 
             volumePermissions:
               enabled: true
+              image:
+                registry: docker.io
+                repository: bitnami/os-shell
+                tag: 12-debian-12-r31
 
             persistence:
               enabled: true
               size: 1Gi
+
+            podSecurityContext:
+              enabled: true
+              fsGroup: 1001
+
+            containerSecurityContext:
+              enabled: true
+              runAsUser: 1001
+              runAsGroup: 1001
+              runAsNonRoot: true
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
 
             resources:
               requests:
