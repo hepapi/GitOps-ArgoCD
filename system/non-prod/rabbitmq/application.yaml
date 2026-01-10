@@ -53,6 +53,11 @@ spec:
 
             volumePermissions:
               enabled: true
+              image:
+                registry: docker.io
+                repository: bitnami/os-shell
+                tag: 12-debian-12-r31
+
 
             persistence:
               enabled: true
