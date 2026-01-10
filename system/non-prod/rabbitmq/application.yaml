@@ -62,3 +62,31 @@ spec:
             persistence:
               enabled: true
               size: 1Gi
+
+
+
+            extraPlugins: "rabbitmq_management"
+            
+            livenessProbe:
+              enabled: true
+              initialDelaySeconds: 180  
+              periodSeconds: 30
+              timeoutSeconds: 20
+              failureThreshold: 10  
+              successThreshold: 1
+
+            readinessProbe:
+              enabled: true
+              initialDelaySeconds: 60  
+              periodSeconds: 10
+              timeoutSeconds: 20
+              failureThreshold: 10
+              successThreshold: 1
+
+            startupProbe:
+              enabled: true
+              initialDelaySeconds: 0
+              periodSeconds: 10
+              timeoutSeconds: 20
+              failureThreshold: 30 
+              successThreshold: 1
