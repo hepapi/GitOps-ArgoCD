@@ -9,15 +9,18 @@ spec:
         elements:
           - cluster: np-dev
             name: dev
-            version: 16.0.14
+            chartVersion: 0.11.4
+
   template:
     metadata:
       name: '{{cluster}}-eventbus'
     spec:
       project: default
+
       destination:
         namespace: dev
         name: '{{cluster}}'
+
       syncPolicy:
         automated:
           selfHeal: true
@@ -27,33 +30,41 @@ spec:
           - CreateNamespace=true
           - PrunePropagationPolicy=foreground
           - PruneLast=true
+
       source:
-        repoURL: https://charts.bitnami.com/bitnami
-        targetRevision: '{{version}}'
+        repoURL: oci://registry-1.docker.io/cloudpirates
         chart: rabbitmq
+        targetRevision: '{{chartVersion}}'
         helm:
           values: |
             fullnameOverride: "eventbus"
 
-            global:
-              security:
-                allowInsecureImages: true
-
             image:
               registry: docker.io
               repository: rabbitmq
-              tag: 4.2.2-management
+              tag: "4.2.2-management"
 
             auth:
-              username: "guest"
-              password: "guest"
-
-            extraConfiguration: |
-              loopback_users = none
-
-            volumePermissions:
               enabled: true
+              username: admin
+              password: eventbus-dev-pass
+              erlangCookie: eventbus-dev-cookie
 
             persistence:
               enabled: true
               size: 1Gi
+
+            memoryHighWatermark:
+              enabled: true
+              type: relative
+              value: 0.6
+
+            containerSecurityContext:
+              allowPrivilegeEscalation: false
+              runAsNonRoot: true
+              runAsUser: 999
+              runAsGroup: 999
+              readOnlyRootFilesystem: false
+
+            podSecurityContext:
+              fsGroup: 999
