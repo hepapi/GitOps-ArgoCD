@@ -10,14 +10,17 @@ spec:
           - cluster: np-dev
             name: dev
             version: 16.0.14
+
   template:
     metadata:
       name: '{{cluster}}-eventbus'
     spec:
       project: default
+
       destination:
         namespace: dev
         name: '{{cluster}}'
+
       syncPolicy:
         automated:
           selfHeal: true
@@ -27,13 +30,14 @@ spec:
           - CreateNamespace=true
           - PrunePropagationPolicy=foreground
           - PruneLast=true
+
       source:
         repoURL: https://charts.bitnami.com/bitnami
-        targetRevision: '{{version}}'
         chart: rabbitmq
+        targetRevision: '{{version}}'
         helm:
           values: |
-            fullnameOverride: "eventbus"
+            fullnameOverride: eventbus
 
             global:
               security:
@@ -43,50 +47,54 @@ spec:
               registry: docker.io
               repository: bitnamilegacy/rabbitmq
               tag: 4.1.3-debian-12-r1
+              pullPolicy: IfNotPresent
 
             auth:
-              username: "guest"
-              password: "guest"
+              username: guest
+              password: guest
+              enableLoopbackUser: false
+
+            plugins: "rabbitmq_management rabbitmq_peer_discovery_k8s"
 
             extraConfiguration: |
               loopback_users = none
-
-            # volumePermissions:
-            #   enabled: true
-            #   image:
-            #     registry: docker.io
-            #     repository: bitnami/os-shell
-            #     tag: 12-debian-12-r31
-
 
             persistence:
               enabled: true
               size: 1Gi
 
+            podSecurityContext:
+              enabled: true
+              fsGroup: 1001
 
+            containerSecurityContext:
+              enabled: true
+              runAsUser: 1001
+              runAsGroup: 1001
+              runAsNonRoot: true
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
 
-            extraPlugins: "rabbitmq_management"
-            
             livenessProbe:
               enabled: true
-              initialDelaySeconds: 180  
+              initialDelaySeconds: 120
               periodSeconds: 30
               timeoutSeconds: 20
-              failureThreshold: 10  
+              failureThreshold: 6
               successThreshold: 1
 
             readinessProbe:
               enabled: true
-              initialDelaySeconds: 60  
-              periodSeconds: 10
+              initialDelaySeconds: 20
+              periodSeconds: 30
               timeoutSeconds: 20
-              failureThreshold: 10
+              failureThreshold: 3
               successThreshold: 1
 
             startupProbe:
               enabled: true
-              initialDelaySeconds: 0
+              initialDelaySeconds: 10
               periodSeconds: 10
               timeoutSeconds: 20
-              failureThreshold: 30 
+              failureThreshold: 30
               successThreshold: 1
