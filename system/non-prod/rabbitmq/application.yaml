@@ -42,7 +42,7 @@ spec:
             image:
               registry: docker.io
               repository: rabbitmq
-              tag: management-alpine
+              tag: 4.2.2-management
 
             auth:
               username: "guest"
