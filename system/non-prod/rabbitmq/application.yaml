@@ -76,19 +76,49 @@ spec:
               readOnlyRootFilesystem: false
 
             livenessProbe:
-              enabled: true
-              initialDelaySeconds: 180
-              periodSeconds: 30
-              timeoutSeconds: 20
-              failureThreshold: 6
-              successThreshold: 1
-            
+              enabled: false
+
             readinessProbe:
-              enabled: true
-              initialDelaySeconds: 60
+              enabled: false
+
+            startupProbe:
+              enabled: false
+
+
+            customLivenessProbe:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - rabbitmq-diagnostics -q ping
+              initialDelaySeconds: 120
               periodSeconds: 30
               timeoutSeconds: 20
-              failureThreshold: 6
               successThreshold: 1
+              failureThreshold: 6
+
+            customReadinessProbe:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - rabbitmq-diagnostics -q check_running
+              initialDelaySeconds: 30
+              periodSeconds: 10
+              timeoutSeconds: 20
+              successThreshold: 1
+              failureThreshold: 6
+
+            customStartupProbe:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - rabbitmq-diagnostics -q ping
+              initialDelaySeconds: 10
+              periodSeconds: 10
+              timeoutSeconds: 5
+              successThreshold: 1
+              failureThreshold: 30
 
 
