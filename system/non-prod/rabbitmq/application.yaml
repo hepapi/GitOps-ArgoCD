@@ -32,7 +32,7 @@ spec:
           - PruneLast=true
 
       source:
-        repoURL: oci://registry-1.docker.io/cloudpirates
+        repoURL: https://cloudpirates.github.io/charts
         chart: rabbitmq
         targetRevision: '{{chartVersion}}'
         helm:
