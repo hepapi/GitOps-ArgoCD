@@ -8,8 +8,8 @@ spec:
     - list:
         elements:
           - cluster: np-dev
-            name: dev
-            chartVersion: 0.11.4
+            env: dev
+            chartVersion: "0.11.4"
 
   template:
     metadata:
@@ -18,8 +18,8 @@ spec:
       project: default
 
       destination:
-        namespace: dev
         name: '{{cluster}}'
+        namespace: dev
 
       syncPolicy:
         automated:
@@ -32,12 +32,12 @@ spec:
           - PruneLast=true
 
       source:
-        repoURL: oci://registry-1.docker.io/cloudpirates/rabbitmq
+        repoURL: oci://registry-1.docker.io/cloudpirates
         chart: rabbitmq
         targetRevision: '{{chartVersion}}'
         helm:
           values: |
-            fullnameOverride: "eventbus"
+            fullnameOverride: eventbus
 
             image:
               registry: docker.io
@@ -54,18 +54,21 @@ spec:
               enabled: true
               size: 1Gi
 
+            config:
+              memoryHighWatermark:
+                enabled: true
+                type: relative
+                value: 0.6
 
-            resources:
-              requests:
-                cpu: 100m
-                memory: 512Mi
-              limits:
-                memory: 1Gi
-
-            memoryHighWatermark:
-              enabled: true
-              type: relative
-              value: 0.6
+            queueBalancing:
+              enabled: false
+              clusterFormation:
+                targetClusterSizeHint: ""
+              quorumQueues:
+                continuousMembershipReconciliation:
+                  enabled: false
+                  targetGroupSize: ""
+                  triggerInterval: ""
 
             containerSecurityContext:
               allowPrivilegeEscalation: false
