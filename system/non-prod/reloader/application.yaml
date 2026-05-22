@@ -1,37 +1,37 @@
 apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-  name: reloader
-  namespace: argocd
-spec:
-  generators:
-    - list:
-        elements:
-          - cluster: np-dev
-            name: dev
-            version: 2.2.8
-  template:
-    metadata:
-      name: '{{cluster}}-reloader'
-    spec:
-      project: default
-      destination:
-        namespace: reloader
-        name: '{{cluster}}'
-      syncPolicy:
-        automated:
-          selfHeal: true
-          prune: true
-        syncOptions:
-          - Validate=true
-          - CreateNamespace=true
-          - PrunePropagationPolicy=foreground
-          - PruneLast=true
-      source:
-        repoURL: https://stakater.github.io/stakater-charts
-        chart: reloader
-        targetRevision: '{{version}}'
-        helm:
-          values: |
-            reloader:
-              watchGlobally: true
+# kind: ApplicationSet
+# metadata:
+#   name: reloader
+#   namespace: argocd
+# spec:
+#   generators:
+#     - list:
+#         elements:
+#           - cluster: np-dev
+#             name: dev
+#             version: 2.2.8
+#   template:
+#     metadata:
+#       name: '{{cluster}}-reloader'
+#     spec:
+#       project: default
+#       destination:
+#         namespace: reloader
+#         name: '{{cluster}}'
+#       syncPolicy:
+#         automated:
+#           selfHeal: true
+#           prune: true
+#         syncOptions:
+#           - Validate=true
+#           - CreateNamespace=true
+#           - PrunePropagationPolicy=foreground
+#           - PruneLast=true
+#       source:
+#         repoURL: https://stakater.github.io/stakater-charts
+#         chart: reloader
+#         targetRevision: '{{version}}'
+#         helm:
+#           values: |
+#             reloader:
+#               watchGlobally: true
