@@ -9,7 +9,7 @@ spec:
         elements:
           - cluster: np-dev
             name: dev
-            version: v2.12.3
+            version: v2.13.3
   template:
     metadata:
       name: '{{cluster}}-rancher'
