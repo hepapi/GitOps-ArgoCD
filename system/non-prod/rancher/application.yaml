@@ -38,7 +38,7 @@ spec:
 
             ingress:
               enabled: true
-              ingressClassName: "nginx"
+              ingressClassName: "rke2-ingress-nginx-migration"
               annotations:
                 cert-manager.io/cluster-issuer: "letsencrypt"
                 nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
