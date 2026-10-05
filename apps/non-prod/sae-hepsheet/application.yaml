@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: sae-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    - repoURL: 'https://github.com/hepapi/helm-base-common.git'
+      path: 'v1.32'
+      targetRevision: 'main'
+      helm:
+        releaseName: sae-dev
+        valueFiles:
+          - $values-repo/non-prod/dev/sae-values.yaml
+
+    - repoURL: 'https://github.com/hepapi/app-values.git'
+      targetRevision: 'main'
+      ref: values-repo
+    
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: sae-dev
+  
+    info:
+    - name: 'Github Repo'
+      value: 'https://github.com/hepapi/sae-dev.git'
+  
+  syncPolicy:
+    automated: # automated sync by default retries failed attempts 5 times with following delays between attempts ( 5s, 10s, 20s, 40s, 80s ); retry controlled using `retry` field.
+      prune: true # Specifies if resources should be pruned during auto-syncing ( false by default ).
+      selfHeal: true # Specifies if partial app sync should be executed when resources are changed only in target Kubernetes cluster and no git change detected ( false by default ).
+    syncOptions:     # Sync options which modifies sync behavior
+    - Validate=false # disables resource validation (equivalent to 'kubectl apply --validate=false') ( true by default ).
+    - CreateNamespace=true # Namespace Auto-Creation ensures that namespace specified as the application destination exists in the destination cluster.
+    - PrunePropagationPolicy=foreground # Supported policies are background, foreground and orphan.
+    - PruneLast=true # Allow the ability for resource pruning to happen as a final, implicit wave of a sync operation
+    - ApplyOutOfSyncOnly=true # Only sync out-of-sync resources, rather than applying every object in the application
+
+  revisionHistoryLimit: 5
