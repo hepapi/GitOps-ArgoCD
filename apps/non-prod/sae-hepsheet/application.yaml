@@ -12,7 +12,7 @@ spec:
       helm:
         releaseName: sae-dev
         valueFiles:
-          - $values-repo/non-prod/dev/sae-values.yaml
+          - $values-repo/non-prod/dev/sae-dev-values.yaml
 
     - repoURL: 'https://github.com/hepapi/app-values.git'
       targetRevision: 'main'
