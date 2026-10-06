@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sae-dev
+  name: sae-ui-dev
   namespace: argocd
 spec:
   project: default
@@ -12,7 +12,7 @@ spec:
       helm:
         releaseName: sae-dev
         valueFiles:
-          - $values-repo/non-prod/dev/sae-dev-values.yaml 
+          - $values-repo/non-prod/dev/sae-ui-dev-values.yaml
 
     - repoURL: 'https://github.com/hepapi/app-values.git'
       targetRevision: 'main'
@@ -25,7 +25,7 @@ spec:
   # info bloğu destination ile aynı hizada olmalı
   info:
     - name: 'Github Repo'
-      value: 'https://github.com/hepapi/sae-dev.git'
+      value: 'https://github.com/hepapi/sae-ui-dev.git'
   
   syncPolicy:
     automated: 
