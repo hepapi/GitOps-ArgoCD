@@ -10,7 +10,7 @@ spec:
       path: 'v1.32'
       targetRevision: 'main'
       helm:
-        releaseName: sae-dev
+        releaseName: sae-ui-dev
         valueFiles:
           - $values-repo/non-prod/dev/sae-ui-dev-values.yaml
 
