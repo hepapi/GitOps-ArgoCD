@@ -22,7 +22,6 @@ spec:
     server: 'https://kubernetes.default.svc'
     namespace: sae-dev
 
-  # info bloğu destination ile aynı hizada olmalı
   info:
     - name: 'Github Repo'
       value: 'https://github.com/hepapi/sae-ui-dev.git'
